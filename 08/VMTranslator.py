@@ -512,8 +512,8 @@ if __name__ == "__main__":
         asm_name = os.path.join(file_name,asm_name)
         code_writer = CodeWriter(asm_name)
         code_writer.writeInit()
-        
-        vm_files = glob.glob(file_name+'*.vm')
+     
+        vm_files = glob.glob(os.path.join(file_name,"*.vm"))
         for file in vm_files:
             code_writer.setStaticVarName(os.path.basename(file)[:-3])
             generateCode(file,code_writer)
