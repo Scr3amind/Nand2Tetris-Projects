@@ -1,0 +1,91 @@
+class ObstacleCar {
+
+    field int init_memAddress;
+    field int init_posX;
+    field int locationX;
+    field int locationY;
+    field bool isLeft;
+    field int limitY;
+
+    constructor ObstacleCar new(int init_locationX, int init_locationY, int init_limit, bool _isLeft) {
+        let init_posX = init_locationX;
+        let locationY = init_locationY;
+        let isLeft = _isLeft;
+        let init_memAddress = 16384;
+        let limitY = init_memAddress + (32 * init_limit);
+        return this;
+    }
+
+    // Change the position on every 'off-screen'
+    method void update(int speedY) {
+        let locationY = locationY + speedY;
+        if(locationY > 250){
+            let locationY = -16;
+            let isLeft = ~isLeft;
+        }
+        if(isLeft){
+            let locationX = init_posX;
+        }
+        else{
+            let locationX = init_posX + 1;
+        }
+        return;
+    }
+
+    method void draw() {
+
+        var int memAddress;
+
+        let memAddress = init_memAddress+locationX;
+        
+        let memAddress = memAddress + (32 * locationY);
+        
+
+        do draw_pixel(memAddress+0, 8184);
+        do draw_pixel(memAddress+32, 10260);
+        do draw_pixel(memAddress+64, 16386);
+        do draw_pixel(memAddress+96, 16386);
+        do draw_pixel(memAddress+128, 20466);
+        do draw_pixel(memAddress+160, 24570);
+        do draw_pixel(memAddress+192, 8196);
+        do draw_pixel(memAddress+224, 8196);
+        do draw_pixel(memAddress+256, 8196);
+        do draw_pixel(memAddress+288, 8196);
+        do draw_pixel(memAddress+320, 8196);
+        do draw_pixel(memAddress+352, 24582);
+        do draw_pixel(memAddress+384, 24582);
+        do draw_pixel(memAddress+416, 24570);
+        do draw_pixel(memAddress+448, 16386);
+        do draw_pixel(memAddress+480, 16380);
+        return;
+    }
+    // Draw pixel with some kind of parallax effect
+    method void draw_pixel(int _memAddress, int pixels)
+    {
+
+        if(_memAddress < init_memAddress){
+            return;
+        }
+        if(_memAddress > limitY){
+            return;
+        }
+        do Memory.poke(_memAddress, pixels);
+        return;
+    }
+
+    // check if crash
+    method bool checkCollision(int carX)
+    {
+        if (locationX = carX){
+            if(locationY > 220){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+}

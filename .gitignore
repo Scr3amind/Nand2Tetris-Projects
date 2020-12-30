@@ -1,3 +1,5 @@
 *.zip
 demo/
 .vscode/
+*/__pycache__
+*.rar

@@ -1,0 +1,87 @@
+class Wall {
+    field int locationX;
+    field int locationY;
+    field int init_memAddress;
+    field int limitY;
+
+
+    constructor Wall new(int init_locationX, int init_limit) {
+        let locationX = init_locationX;
+        let locationY = 0;
+        let init_memAddress = 16384;
+        let limitY = init_memAddress + (32 * init_limit);
+        return this;
+    }
+
+    method void update(int speedY){
+        let locationY = locationY + speedY;
+        if(locationY > 250){
+            let locationY = 0;
+        }
+        return;
+    }
+
+
+    method void draw(){
+        do drawWall(0);
+        
+        do drawWall(32);
+        
+        do drawWall(64);
+        
+        do drawWall(96);
+        
+        do drawWall(128);
+        
+        do drawWall(160);
+        
+        do drawWall(192);
+        
+        do drawWall(224);
+        return;
+    }
+
+    method void drawWall(int _locationY) {
+        var int memAddress;
+
+        let memAddress = init_memAddress+locationX;
+            
+        let memAddress = memAddress + (32 * (locationY + _locationY));
+
+        do draw_pixel(memAddress+0, 1024);
+        do draw_pixel(memAddress+32, 2016);
+        do draw_pixel(memAddress+64, 32);
+        do draw_pixel(memAddress+96, 2016);
+        do draw_pixel(memAddress+128, 1024);
+        do draw_pixel(memAddress+160, 2016);
+        do draw_pixel(memAddress+192, 32);
+        do draw_pixel(memAddress+224, 2016);
+        do draw_pixel(memAddress+256, 1024);
+        do draw_pixel(memAddress+288, 2016);
+        do draw_pixel(memAddress+320, 32);
+        do draw_pixel(memAddress+352, 2016);
+        do draw_pixel(memAddress+384, 1024);
+        do draw_pixel(memAddress+416, 2016);
+        do draw_pixel(memAddress+448, 32);
+        do draw_pixel(memAddress+480, 0);
+        return;
+    }
+
+    method void draw_pixel(int _memAddress, int pixels)
+    {
+        var int temp;
+
+        if(_memAddress > limitY){
+            let temp = _memAddress - limitY;
+            do Memory.poke(init_memAddress + temp, pixels);
+            return;
+        }
+        do Memory.poke(_memAddress, pixels);
+        return;
+    }
+
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+}

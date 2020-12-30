@@ -1,0 +1,47 @@
+class Car {
+
+    field int memAddress;
+    field int locationX;
+
+    field int locationY;
+
+    constructor Car new(int init_locationX, int init_locationY) {
+        let locationX = init_locationX;
+        let locationY = init_locationY;
+        return this;
+    }
+
+    method void update(int pos) {
+
+        let locationX = pos;
+
+        return;
+    }
+
+    method void draw() {
+        let memAddress = 16384+locationX;
+        let memAddress = memAddress + (32 * locationY);
+        do Memory.poke(memAddress+0, 8184);
+        do Memory.poke(memAddress+32, 10260);
+        do Memory.poke(memAddress+64, 16386);
+        do Memory.poke(memAddress+96, 16386);
+        do Memory.poke(memAddress+128, 20466);
+        do Memory.poke(memAddress+160, 24570);
+        do Memory.poke(memAddress+192, 8196);
+        do Memory.poke(memAddress+224, 8196);
+        do Memory.poke(memAddress+256, 8196);
+        do Memory.poke(memAddress+288, 8196);
+        do Memory.poke(memAddress+320, 8196);
+        do Memory.poke(memAddress+352, 24582);
+        do Memory.poke(memAddress+384, 24582);
+        do Memory.poke(memAddress+416, 24570);
+        do Memory.poke(memAddress+448, 16386);
+        do Memory.poke(memAddress+480, 16380);
+        return;
+    }
+
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+}

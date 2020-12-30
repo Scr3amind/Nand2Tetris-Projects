@@ -1,0 +1,142 @@
+class RacingGame {
+
+    static RacingGame instance; // the singleton, a Racing game instance
+    field int delay;
+    field int initial_speed;
+    field int speed; 
+    field Car car;
+    field ObstacleCar obstacle_car;
+    field ObstacleCar obstacle_car2;
+    field ObstacleCar obstacle_car3;
+    field Wall wall;
+    field Wall wall2;
+    field boolean exit; 
+
+    
+    /** Constructs a new Racing game. */
+    constructor RacingGame new() {
+        do Screen.clearScreen();
+        let car = Car.new(20,234);
+        let initial_speed = 5;
+        let obstacle_car = ObstacleCar.new(20,0,250, true);
+        let obstacle_car2 = ObstacleCar.new(20,100,250, false);
+        let obstacle_car3 = ObstacleCar.new(20,165,250, true);
+        let wall = Wall.new(19,250);
+        let wall2 = Wall.new(22,250);
+        return this;
+    }
+
+    method void setDelay(int _delay){
+        let delay = _delay;
+        return;
+    }
+    /** Deallocates the object's memory. */
+    method void dispose() {
+        do car.dispose();
+        do obstacle_car.dispose();
+        do obstacle_car2.dispose();
+        do obstacle_car3.dispose();
+        do wall.dispose();
+        do wall2.dispose();
+
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    method void drawScore(int score, int posX, int posY)
+    {
+        do Output.moveCursor(posY, posX);
+        do Output.printString("Score: ");
+        do Output.printInt(score);
+        return;
+
+    }
+
+    method void updateSpeed(int iter){
+        if(speed > 16){
+            return;
+        }
+        let speed = initial_speed + (iter/10);
+        return;
+    }
+
+
+    function void newInstance() {
+        let instance = RacingGame.new();
+        return;
+    }
+    
+
+    function RacingGame getInstance() {
+        return instance;
+    }
+
+
+    method void run() {
+        var int iteration;
+        var char key;
+        var int pos;
+        let pos = 20;
+
+        let iteration = 0;
+
+        while (~exit) {
+
+
+            // Process Inputs
+     
+            let key = Keyboard.keyPressed();
+            if (key = 0) { let pos = pos; }
+            if (key = 130) { let pos = 20; }
+	        else {
+	            if (key = 132) { let pos = 21; }
+		        else {
+                    if (key = 140) { let exit = true; }
+		        }
+            }
+            // Update
+            do car.update(pos);
+            do obstacle_car.update(speed);
+            do obstacle_car2.update(speed);
+            do obstacle_car3.update(speed);
+            let exit = obstacle_car.checkCollision(pos);
+            let exit = exit | obstacle_car2.checkCollision(pos);
+            let exit = exit | obstacle_car3.checkCollision(pos);
+            do wall.update(speed + 2);
+            do wall2.update(speed + 2);
+            do updateSpeed(iteration);
+
+
+
+            // Render
+            do Screen.clearScreen();
+            do car.draw();
+            do obstacle_car.draw();
+            do obstacle_car2.draw();
+            do obstacle_car3.draw();
+            do wall.draw();
+            do wall2.draw();
+            do drawScore(iteration,20,10);
+            let iteration = iteration + 1;
+
+            do Sys.wait(delay);
+        }
+
+
+
+
+
+
+
+	    if (exit) {
+            do Screen.clearScreen();
+            do drawScore(iteration,30,12);
+            do Output.moveCursor(10,27);
+	        do Output.printString("Game Over");
+	    }
+            
+        return;
+    }
+
+    
+}

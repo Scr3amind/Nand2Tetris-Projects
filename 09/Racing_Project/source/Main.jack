@@ -1,0 +1,13 @@
+class Main {
+
+    /** Initializes a Racing game and starts running it. */
+    function void main() {
+        var RacingGame game;
+        do RacingGame.newInstance();
+        let game = RacingGame.getInstance();
+        do game.setDelay(50);
+        do game.run();
+        do game.dispose();
+        return;
+    }
+}
