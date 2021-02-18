@@ -9,12 +9,44 @@
  */
 class Math {
 
+    static Array twoToThe;
+
     /** Initializes the library. */
     function void init() {
+        var int index;
+        var int currentValue;
+
+        let twoToThe = Array.new(16);
+        let index = 0;
+        let currentValue = 1; // 2^0
+
+        while(index < 16){
+            let twoToThe[index] = currentValue;
+            let currentValue = currentValue + currentValue;
+            let index = index + 1;
+        }
+
+        return;
     }
 
     /** Returns the absolute value of x. */
     function int abs(int x) {
+        if (x < 0) {
+            return -x;
+        }
+        else {
+            return x;
+        }
+    }
+
+    function boolean bit(int x, int i){
+        if((twoToThe[i] & x) = twoToThe[i]) {
+            return true;
+        }
+        else {
+            return false;
+        }
+
     }
 
     /** Returns the product of x and y. 
@@ -23,6 +55,25 @@ class Math {
      *  the Jack expressions x*y and multiply(x,y) return the same value.
      */
     function int multiply(int x, int y) {
+        var int sum;
+        var int shiftedX;
+        var int i;
+
+        let sum = 0;
+        let shiftedX = x;
+        let i = 0;
+
+        while (i < 16) {
+            if(Math.bit(y, i)) {
+                let sum = sum + shiftedX;
+            }
+            let i = i + 1;
+            let shiftedX = shiftedX + shiftedX;
+        }
+
+        return sum;
+
+
     }
 
     /** Returns the integer part of x/y.
@@ -31,17 +82,78 @@ class Math {
      *  the Jack expressions x/y and divide(x,y) return the same value.
      */
     function int divide(int x, int y) {
+        var int division_result;
+        var int absX;
+        var int absY;
+        let absX = Math.abs(x);
+        let absY = Math.abs(y);
+        let division_result = Math.divideAlgorithm(absX, absY);
+
+        if ((x < 0) | (y < 0)) {
+            return -division_result; 
+        }
+        else {
+            return division_result;
+        }
+        
+        
+    }
+
+    function int divideAlgorithm(int absX, int absY) {
+
+        var int q;
+
+        if ((absY > absX) | (absY < 0)) {return 0;}
+        else {
+            
+            let q = Math.divide(absX, absY + absY);
+            if ((absX - (2 * q * absY)) < absY ) {
+                return q + q;
+            }
+            else {
+                return q + q + 1;
+            }
+
+        }
+        
     }
 
     /** Returns the integer part of the square root of x. */
     function int sqrt(int x) {
+        var int y;
+        var int j;
+        var int cond;
+        let y = 0;
+        // n = 16 (bits)
+        let j = 128; // 2^(n/2 - 1)
+        while (j > 0) {
+            let cond = (y + j)*(y + j); 
+            if( ((cond < x) | (cond = x) & (cond > 0) )) {
+                let y = y + j;
+            }
+            let j = j/2;
+        }
+        return y;
+
     }
 
     /** Returns the greater number. */
     function int max(int a, int b) {
+        if (a > b) {
+            return a;
+        }
+        else {
+            return b;
+        }
     }
 
     /** Returns the smaller number. */
     function int min(int a, int b) {
+        if (a < b) {
+            return a;
+        }
+        else {
+            return b;
+        }
     }
 }
