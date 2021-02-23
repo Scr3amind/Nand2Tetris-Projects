@@ -125,13 +125,13 @@ class Math {
         var int cond;
         let y = 0;
         // n = 16 (bits)
-        let j = 128; // 2^(n/2 - 1)
-        while (j > 0) {
-            let cond = (y + j)*(y + j); 
+        let j = 7; // 2^(n/2 - 1)
+        while (j > (-1)) {
+            let cond = (y + twoToThe[j])*(y + twoToThe[j]); 
             if( ((cond < x) | (cond = x) & (cond > 0) )) {
-                let y = y + j;
+                let y = y + twoToThe[j];
             }
-            let j = j/2;
+            let j = j - 1;
         }
         return y;
 
