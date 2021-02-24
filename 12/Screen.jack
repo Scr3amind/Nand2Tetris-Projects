@@ -11,33 +11,204 @@
  */
 class Screen {
 
+    static Array screen;
+    static Array twoToThe;
+    static bool blackPixels;
+
+
     /** Initializes the Screen. */
     function void init() {
+        var int index;
+        var int currentValue;
+        
+        let screen = 16384;
+        let blackPixels = true;
+        let twoToThe = Array.new(16);
+        let index = 0;
+        let currentValue = 1; // 2^0
+
+        while(index < 16){
+            let twoToThe[index] = currentValue;
+            let currentValue = currentValue + currentValue;
+            let index = index + 1;
+        }
+
+        return;
     }
 
     /** Erases the entire screen. */
     function void clearScreen() {
+        var int offset;
+        let offset = 0;
+        // Screen memory map 16384 - 24575
+        while (offset < 8192) {
+            let screen[offset] = 0;
+            let offset = offset + 1;
+        }
+        return;
+
     }
 
     /** Sets the current color, to be used for all subsequent drawXXX commands.
      *  Black is represented by true, white by false. */
     function void setColor(boolean b) {
+        let blackPixels = b;
+        return;
     }
 
     /** Draws the (x,y) pixel, using the current color. */
     function void drawPixel(int x, int y) {
+        var int address;
+        var int value;
+        var int modulo;
+
+        let address = (32 * y) + (x / 16);
+        let value = screen[address];
+        let modulo = x - ((x/16) * 16);
+
+        if(blackPixels) {
+            let value = value | twoToThe[modulo];
+        }
+        else {
+            let value = value & (~twoToThe[modulo]); 
+        }
+
+        let screen[address] = value;
+
+        return;
     }
 
     /** Draws a line from pixel (x1,y1) to pixel (x2,y2), using the current color. */
     function void drawLine(int x1, int y1, int x2, int y2) {
+        if(x1 = x2) {
+            do Screen.drawVerticalLine(x1, y1, y2);
+            return;
+        }
+        if(y1 = y2) {
+            do Screen.drawHorizontalLine(x1, x2, y1);
+            return;
+        }
+        
+        do Screen.drawDiagonalLine(x1, y1, x2, y2);
+        return;
+        
+    }
+
+    function void drawVerticalLine(int x, int y1, int y2) {
+        var int pixelToDrawY;
+        var int initialY;
+        var int finalY;
+
+        if(y2 > y1){
+            let initialY = y1;
+            let finalY = y2;
+        }
+        else {
+            let initialY = y2;
+            let finalY = y1;
+        }
+
+        let pixelToDrawY = initialY;
+        while(pixelToDrawY < (finalY + 1)) {
+            do Screen.drawPixel(x, pixelToDrawY);
+            let pixelToDrawY = pixelToDrawY + 1;
+        }
+        return;
+    }
+
+    function void drawHorizontalLine(int x1, int x2, int y) {
+        var int pixelToDrawX;
+        var int initialX;
+        var int finalX;
+
+        if(x2 > x1){
+            let initialX = x1;
+            let finalX = x2;
+        }
+        else {
+            let initialX = x2;
+            let finalX = x1;
+        }
+
+        let pixelToDrawX = initialX;
+        while(pixelToDrawX < (finalX + 1)) {
+            do Screen.drawPixel(pixelToDrawX, y);
+            let pixelToDrawX = pixelToDrawX + 1;
+        }
+        return;
+    }
+
+    function void drawDiagonalLine(int x1, int y1, int x2, int y2) {
+        var int a;
+        var int b;
+        var int diff;
+        var int dx;
+        var int dy;
+        var int xCoord;
+        var int yCoord;
+        
+        let a = 0;
+        let b = 0;
+        let diff = 0;
+        let dx = Math.abs(x2 - x1);
+        let dy = Math.abs(y2 - y1);
+
+        while ((a < (dx + 1)) & (b < (dy + 1))) {
+            let xCoord = x1 + a;
+            let yCoord = y1 + b;
+            
+            if(x1 > x2) {
+                let xCoord = x1 - a;
+            }
+            
+            if(y1 > y2) {
+                let yCoord = y1 - b;
+            }
+
+            do Screen.drawPixel(xCoord, yCoord);
+            
+            if(diff < 0) {
+                let a = a + 1;
+                let diff = diff + dy;
+            }
+            else {
+                let b = b + 1;
+                let diff = diff - dx;    
+            }
+        }
+
+        return;
     }
 
     /** Draws a filled rectangle whose top left corner is (x1, y1)
      * and bottom right corner is (x2,y2), using the current color. */
     function void drawRectangle(int x1, int y1, int x2, int y2) {
+        var int dy;
+        var int currentY;
+        let dy = y2 - y1;
+        let currentY = y1;
+
+        while(currentY < (y2 + 1)) {
+            do Screen.drawHorizontalLine(x1, x2, currentY);
+            let currentY = currentY + 1;
+        }
+        return;
+        
     }
 
     /** Draws a filled circle of radius r<=181 around (x,y), using the current color. */
     function void drawCircle(int x, int y, int r) {
+        var int dy;
+        var int squareRootDiff;
+        let dy = -r;
+
+        while( dy < (r + 1)) {
+            let squareRootDiff = Math.sqrt((r*r) - (dy*dy));
+            do Screen.drawHorizontalLine(x - squareRootDiff, x + squareRootDiff, y + dy);
+            let dy = dy + 1;
+
+        }
+        return;
+
     }
 }
